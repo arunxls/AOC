@@ -5,15 +5,20 @@ def main():
     with open(filename) as fd:
         lines = fd.readlines()
         lines = [int(l.rstrip()) for l in lines]
-    prev = lines[0]
+    return (count_window(lines, 1), count_window(lines, 3))
+
+def count_window(depths, window_size):
+    start = 0
+    end = window_size
     increases = 0
-    for index in range(1, len(lines)):
-        if lines[index] > prev:
-            # print(prev, lines[index])
+    while end != len(depths) + 1:
+        sum1 = sum(depths[start:end]) 
+        sum2 = sum(depths[start+1: end+1])
+
+        if sum1 < sum2:
             increases += 1
-        else:
-            print(prev, lines[index])
-        prev = lines[index]
+        start += 1
+        end += 1
     return increases
 
 if __name__ == '__main__':
