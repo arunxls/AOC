@@ -4,8 +4,33 @@
 main(_) ->
     {ok, File} = file:open('day2.txt', [read]),
     Actions = readLines(File),
-    Position = get_position(Actions),
-    erlang:display(lists:nth(1, Position) * lists:nth(2, Position)).
+    Position1 = get_position(Actions),
+    erlang:display(lists:nth(1, Position1) * lists:nth(2, Position1)),
+    Position2 = get_position_with_aim(Actions),
+    erlang:display(lists:nth(1, Position2)* lists:nth(2, Position2)).
+
+get_position_with_aim(Actions) ->
+    get_position_with_aim(Actions, [0,0,0]).
+
+get_position_with_aim([], Coordinates) -> Coordinates;
+
+get_position_with_aim([[Dir, Dist] | T], [X, Y, Aim]) ->
+    case Dir of
+        forward -> 
+            X_modified = X + Dist,
+            Y_modified = Y + Aim * Dist,
+            Aim_modified = Aim;
+        down ->
+            Aim_modified = Aim + Dist,
+            X_modified = X,
+            Y_modified = Y;
+        up ->
+            Aim_modified = Aim - Dist,
+            X_modified = X,
+            Y_modified = Y
+        end,
+        get_position_with_aim(T, [X_modified, Y_modified, Aim_modified]).
+
 
 get_position(Actions) ->
     get_position(Actions, [0,0]).
@@ -21,7 +46,7 @@ get_position([[Dir, Dist]|T], Coordinates) ->
     end.
 
 readLines(File) ->
-    readLines(File, []).
+    lists:reverse(readLines(File, [])).
 
 readLines(File, Acc) ->
     case file:read_line(File) of
